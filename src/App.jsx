@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import ReactFlow, { addEdge, removeElements, ReactFlowProvider } from 'reactflow';
+import React, { useState, useEffect } from 'react';
+import ReactFlow, {ReactFlowProvider } from 'reactflow';
 import { hierarchy, tree } from 'd3-hierarchy';
 
 const initialElements = [
@@ -12,37 +12,33 @@ const initialElements = [
 ];
 
 const App = () => {
-  const [elements, setElements] = useState(initialElements);
+  const [nodes, setNodes] = useState(initialElements);
 
-  const onElementsRemove = (elementsToRemove) => {
-    setElements((els) => removeElements(elementsToRemove, els));
-  };
-
-  const onConnect = (params) => setElements((els) => addEdge(params, els));
-
+  useEffect(() => {
+    return () => {
+      const newElements = graph.descendants().map((node) => {
+        return {
+          id: node.data.id,
+          data: { label: node.data.label },
+          position: { x: node.x, y: node.y }
+        };
+      });
+    
+      setNodes(newElements);
+    }
+  }, [nodes])
+  
   const graph = hierarchy(initialElements[0], (d) => d.children);
 
   tree().size([500, 500])(graph);
 
-  const newElements = graph.descendants().map((node) => {
-    return {
-      id: node.data.id,
-      data: { label: node.data.label },
-      position: { x: node.x, y: node.y }
-    };
-  });
-
-  setElements(newElements);
+  
 
   return (
     <div style={{height: '100vh', width: '100vw'}}>
-      <ReactFlowProvider>
         <ReactFlow
-          elements={elements}
-          onElementsRemove={onElementsRemove}
-          onConnect={onConnect}
+          nodes={nodes}
         />
-      </ReactFlowProvider>
     </div>
   );
 };

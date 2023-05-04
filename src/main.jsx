@@ -4,6 +4,8 @@ import App from './App.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <App />
+    <div style={{width:'100vw', height:'100vh'}}>
+      <App />
+    </div>
   </React.StrictMode>,
 )
